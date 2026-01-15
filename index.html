@@ -17,7 +17,7 @@ body{
   font-family:Segoe UI,sans-serif;color:white;
 }
 
-/* START */
+/* START OVERLAY */
 #overlay{
   position:fixed;inset:0;z-index:999;
   display:flex;align-items:center;justify-content:center;
@@ -88,11 +88,42 @@ button{
 }
 
 /* MESSAGE */
-#message{position:absolute;top:72%;width:100%;
-  font-size:20px;color:#ff9bb8;display:none}
+#message{
+  position:absolute;top:70%;width:100%;
+  font-size:20px;color:#ff9bb8;display:none;
+  padding:0 12px;
+}
 
-/* COUNTER */
-#counter{margin-top:12px;font-size:15px;color:#ffd6e5}
+/* COUNTER MOBILE SAFE */
+#counter{
+  font-size:clamp(14px,4vw,18px);
+  line-height:1.4;margin-top:10px;
+}
+@media(max-width:480px){
+  #counter{
+    position:fixed;bottom:14px;left:50%;
+    transform:translateX(-50%);
+    background:rgba(15,15,20,.75);
+    padding:8px 14px;border-radius:14px;
+    box-shadow:0 0 15px rgba(255,92,138,.4);
+    z-index:50;
+  }
+}
+
+/* EASTER EGG */
+#love-egg{
+  position:fixed;top:50%;left:50%;
+  transform:translate(-50%,-50%) scale(.8);
+  font-size:clamp(22px,6vw,34px);
+  color:#ffd6e5;opacity:0;
+  pointer-events:none;z-index:999;
+  text-shadow:0 0 20px rgba(255,92,138,.8);
+  transition:opacity .6s ease,transform .6s ease;
+}
+#love-egg.show{
+  opacity:1;
+  transform:translate(-50%,-50%) scale(1);
+}
 
 /* HIDE MUSIC */
 #music{display:none}
@@ -104,14 +135,14 @@ button{
 <div id="overlay"><span>Tap to start ❤️</span></div>
 
 <div id="fade">
-  <span id="fr">Je t’aimerai toujours.</span>
+  <span id="fr">Je t’aime, toujours.</span>
   <span id="id">Aku akan selalu mencintaimu.</span>
 </div>
 
 <div class="container">
   <h1>Do you love me, Eleonore? 💕</h1>
 
-  <img src="https://luppq1.github.io/minou/minou.PNG?v=6"
+  <img src="https://luppq1.github.io/minou/minou.PNG?v=7"
        class="photo" id="photo">
 
   <button id="yes">Yes</button>
@@ -125,6 +156,8 @@ button{
     <div id="counter"></div>
   </div>
 </div>
+
+<div id="love-egg">I LOVE YOU MORE 💖</div>
 
 <iframe id="music"
 src="https://www.youtube.com/embed/kPhpHvnnn0Q?enablejsapi=1"
@@ -141,10 +174,9 @@ const fr=document.getElementById("fr");
 const id=document.getElementById("id");
 const counter=document.getElementById("counter");
 const music=document.getElementById("music");
+const loveEgg=document.getElementById("love-egg");
 
-let yesScale=1;
-let busy=false;
-let loopInterval;
+let yesScale=1, busy=false, loop;
 
 /* START */
 overlay.onclick=()=>{
@@ -158,10 +190,8 @@ function moveNo(){
   if(busy) return; busy=true;
   no.style.left=Math.random()*(innerWidth-140)+"px";
   no.style.top=Math.random()*(innerHeight-140)+"px";
-
   yesScale+=0.12;
   yes.style.transform=`translateX(-120%) scale(${yesScale})`;
-
   setTimeout(()=>busy=false,350);
 }
 no.addEventListener(
@@ -175,27 +205,21 @@ yes.onclick=()=>{
   photo.classList.add("active");
   msg.style.display="block";
   setTimeout(()=>yes.classList.remove("pop"),450);
-
-  setTimeout(startFadeLoop,5000);
+  setTimeout(startFade,5000);
 };
 
 /* FADE LOOP */
-function startFadeLoop(){
+function startFade(){
   fade.classList.add("show");
-  fr.classList.add("show");
-  id.classList.remove("show");
-
-  loopInterval=setInterval(()=>{
+  fr.classList.add("show"); id.classList.remove("show");
+  loop=setInterval(()=>{
     fr.classList.toggle("show");
     id.classList.toggle("show");
   },3000);
-
-  setTimeout(stopFade,12000);
-}
-
-function stopFade(){
-  clearInterval(loopInterval);
-  fade.classList.remove("show");
+  setTimeout(()=>{
+    clearInterval(loop);
+    fade.classList.remove("show");
+  },12000);
 }
 
 /* COUNTER */
@@ -205,12 +229,18 @@ setInterval(()=>{
   const days=Math.floor(d/86400);d%=86400;
   const h=Math.floor(d/3600);d%=3600;
   const m=Math.floor(d/60);const s=d%60;
-  counter.innerHTML=`<br>We have been together for<br>
+  counter.innerHTML=`We have been together for<br>
   <strong>${days}</strong> days •
   <strong>${h}</strong> hours •
   <strong>${m}</strong> minutes •
   <strong>${s}</strong> seconds ❤️`;
 },1000);
+
+/* EASTER EGG */
+photo.onclick=()=>{
+  loveEgg.classList.add("show");
+  setTimeout(()=>loveEgg.classList.remove("show"),2500);
+};
 
 /* HEARTS */
 setInterval(()=>{
@@ -225,4 +255,3 @@ setInterval(()=>{
 
 </body>
 </html>
-
