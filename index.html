@@ -20,7 +20,7 @@ body {
     color: white;
 }
 
-/* OVERLAY START */
+/* START OVERLAY */
 #overlay {
     position: fixed;
     inset: 0;
@@ -54,7 +54,6 @@ body {
 }
 #fade.show {
     opacity: 1;
-    pointer-events: auto;
 }
 #fade span {
     position: absolute;
@@ -180,14 +179,14 @@ button {
 <body>
 
 <div id="overlay"><span>Tap to start ❤️</span></div>
-<div id="fade"><span>Je t’aime, toujours.</span></div>
+<div id="fade"><span>Je t’aimerai toujours minou.</span></div>
 <div id="volume">🔊</div>
 
 <div class="container">
     <h1>Do you love me, Eleonore? 💕</h1>
 
     <img
-      src="https://luppq1.github.io/minou/minou.PNG?v=4"
+      src="https://luppq1.github.io/minou/minou.PNG?v=5"
       class="photo"
       id="photo"
     >
@@ -252,10 +251,14 @@ yesBtn.onclick = () => {
     photo.classList.add("active");
     document.getElementById("message").style.display = "block";
 
+    // Fade to black after a moment
     setTimeout(() => fade.classList.add("show"), 5000);
+
+    // Return to normal view
+    setTimeout(() => fade.classList.remove("show"), 11000);
 };
 
-/* COUNTER LIVE */
+/* COUNTER */
 const startDate = new Date("2025-04-27T00:00:00");
 function updateCounter() {
     const now = new Date();
