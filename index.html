@@ -3,20 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Do You Love Me?</title>
+<title>Do You Love Me, Eleonore?</title>
 
 <style>
-    .photo {
-    width: 160px;
-    height: 160px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 4px solid #ff5c8a;
-    box-shadow: 0 0 20px rgba(255,92,138,0.6);
-    margin: 20px auto;
-    display: block;
-}
-
 :root {
     --pink: #ff5c8a;
     --bg-dark: #0f0f14;
@@ -37,6 +26,7 @@ body {
     top: -20px;
     opacity: 0.7;
     animation: fall linear infinite;
+    z-index: 1;
 }
 
 @keyframes fall {
@@ -50,16 +40,30 @@ body {
     width: 100%;
     height: 100%;
     text-align: center;
+    z-index: 2;
 }
 
 h1 {
-    margin-top: 60px;
+    margin-top: 50px;
     font-size: 26px;
     color: #ffd6e5;
-    z-index: 2;
-    position: relative;
 }
 
+/* PHOTO */
+.photo {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--pink);
+    box-shadow: 0 0 20px rgba(255,92,138,0.6);
+    margin: 20px auto;
+    display: block;
+    position: relative;
+    z-index: 5;
+}
+
+/* BUTTONS */
 button {
     position: absolute;
     padding: 16px 36px;
@@ -68,14 +72,14 @@ button {
     border: none;
     cursor: pointer;
     transition: left 0.4s ease, top 0.4s ease, transform 0.3s ease;
-    z-index: 2;
+    z-index: 5;
 }
 
 #yes {
     background: linear-gradient(135deg, #ff5c8a, #ff85a2);
     color: white;
     left: 50%;
-    top: 55%;
+    top: 60%;
     transform: translateX(-120%) scale(1);
     box-shadow: 0 0 20px rgba(255,92,138,0.6);
 }
@@ -84,7 +88,7 @@ button {
     background-color: #3a3a4a;
     color: #ddd;
     left: 50%;
-    top: 55%;
+    top: 60%;
     transform: translateX(20%);
 }
 
@@ -94,23 +98,23 @@ button {
 }
 
 @keyframes shake {
-    0% { transform: translateX(20%) translateY(0); }
-    25% { transform: translateX(18%) translateY(-2px); }
-    50% { transform: translateX(22%) translateY(2px); }
-    75% { transform: translateX(19%) translateY(-2px); }
-    100% { transform: translateX(20%) translateY(0); }
+    0% { transform: translateX(20%); }
+    25% { transform: translateX(15%); }
+    50% { transform: translateX(25%); }
+    75% { transform: translateX(18%); }
+    100% { transform: translateX(20%); }
 }
 
 /* MESSAGE */
 #message {
     position: absolute;
-    top: 72%;
+    top: 75%;
     width: 100%;
-    font-size: 26px;
+    font-size: 22px;
     color: #ff9bb8;
     display: none;
     animation: fadeIn 0.6s ease;
-    z-index: 2;
+    z-index: 5;
 }
 
 @keyframes fadeIn {
@@ -124,12 +128,17 @@ button {
     width: 8px;
     height: 8px;
     animation: confetti-fall 1.5s linear forwards;
-    z-index: 3;
+    z-index: 10;
 }
 
 @keyframes confetti-fall {
     from { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
     to { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+}
+
+/* HIDE YOUTUBE */
+#music {
+    display: none;
 }
 </style>
 </head>
@@ -137,19 +146,27 @@ button {
 <body>
 
 <div class="container">
-    <h1>Do you love me? 💕</h1>
-    
-<img src="minou.png" alt="Wahyu & Eleonore" class="photo">
+    <h1>Do you love me, Eleonore? 💕</h1>
+
+    <img src="minou.png" alt="Wahyu & Eleonore" class="photo">
 
     <button id="yes">Yes</button>
     <button id="no">No</button>
 
-    <div id="message">YAY 😆❤️ I knew it!</div>
+    <div id="message">
+        I knew it, Eleonore ❤️<br>
+        Love you always,<br>
+        <strong>Wahyu</strong><br>
+        <small>Since 27 April 2025</small>
+    </div>
 </div>
 
-<audio id="sound">
-    <source src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg">
-</audio>
+<!-- YOUTUBE MUSIC -->
+<iframe
+    id="music"
+    src="https://www.youtube.com/embed/2Vv-BfVoq4g?enablejsapi=1"
+    allow="autoplay">
+</iframe>
 
 <script>
 /* HEART BACKGROUND */
@@ -183,7 +200,7 @@ function moveNo() {
         noBtn.classList.remove("shake");
 
         const maxX = window.innerWidth - 160;
-        const maxY = window.innerHeight - 100;
+        const maxY = window.innerHeight - 120;
 
         noBtn.style.left = Math.random() * maxX + "px";
         noBtn.style.top = Math.random() * maxY + "px";
@@ -205,7 +222,12 @@ if (window.matchMedia("(hover: hover)").matches) {
 /* YES CLICK */
 yesBtn.addEventListener("click", () => {
     document.getElementById("message").style.display = "block";
-    document.getElementById("sound").play();
+
+    const iframe = document.getElementById("music");
+    iframe.contentWindow.postMessage(
+        '{"event":"command","func":"playVideo","args":""}',
+        "*"
+    );
 
     for (let i = 0; i < 80; i++) {
         const confetti = document.createElement("div");
@@ -223,4 +245,3 @@ yesBtn.addEventListener("click", () => {
 
 </body>
 </html>
-
