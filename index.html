@@ -20,6 +20,30 @@ body {
     color: white;
 }
 
+/* OVERLAY */
+#overlay {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at center, #3a1022, #0f0f14);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    cursor: pointer;
+}
+
+#overlay span {
+    font-size: 22px;
+    color: #ffd6e5;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: .6; }
+    50% { opacity: 1; }
+    100% { opacity: .6; }
+}
+
 /* FLOATING HEARTS */
 .heart {
     position: absolute;
@@ -71,7 +95,7 @@ button {
     border-radius: 14px;
     border: none;
     cursor: pointer;
-    transition: left 0.4s ease, top 0.4s ease, transform 0.3s ease;
+    transition: left .4s ease, top .4s ease, transform .3s ease;
     z-index: 5;
 }
 
@@ -80,8 +104,7 @@ button {
     color: white;
     left: 50%;
     top: 60%;
-    transform: translateX(-120%) scale(1);
-    box-shadow: 0 0 20px rgba(255,92,138,0.6);
+    transform: translateX(-120%);
 }
 
 #no {
@@ -92,19 +115,6 @@ button {
     transform: translateX(20%);
 }
 
-/* SHAKE */
-.shake {
-    animation: shake 0.25s linear;
-}
-
-@keyframes shake {
-    0% { transform: translateX(20%); }
-    25% { transform: translateX(15%); }
-    50% { transform: translateX(25%); }
-    75% { transform: translateX(18%); }
-    100% { transform: translateX(20%); }
-}
-
 /* MESSAGE */
 #message {
     position: absolute;
@@ -113,27 +123,7 @@ button {
     font-size: 22px;
     color: #ff9bb8;
     display: none;
-    animation: fadeIn 0.6s ease;
     z-index: 5;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* CONFETTI */
-.confetti {
-    position: fixed;
-    width: 8px;
-    height: 8px;
-    animation: confetti-fall 1.5s linear forwards;
-    z-index: 10;
-}
-
-@keyframes confetti-fall {
-    from { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
-    to { transform: translateY(110vh) rotate(360deg); opacity: 0; }
 }
 
 /* HIDE YOUTUBE */
@@ -145,10 +135,15 @@ button {
 
 <body>
 
+<!-- TAP TO START -->
+<div id="overlay">
+    <span>Tap to start ❤️</span>
+</div>
+
 <div class="container">
     <h1>Do you love me, Eleonore? 💕</h1>
 
-    <img src="minou.png" alt="Wahyu & Eleonore" class="photo">
+    <img src="minou.png?v=2" alt="Wahyu & Eleonore" class="photo">
 
     <button id="yes">Yes</button>
     <button id="no">No</button>
@@ -169,6 +164,17 @@ button {
 </iframe>
 
 <script>
+/* START MUSIC */
+document.getElementById("overlay").addEventListener("click", () => {
+    document.getElementById("overlay").style.display = "none";
+
+    const iframe = document.getElementById("music");
+    iframe.contentWindow.postMessage(
+        '{"event":"command","func":"playVideo","args":""}',
+        "*"
+    );
+});
+
 /* HEART BACKGROUND */
 function createHeart() {
     const heart = document.createElement("div");
@@ -182,65 +188,6 @@ function createHeart() {
     setTimeout(() => heart.remove(), 8000);
 }
 setInterval(createHeart, 300);
-
-/* BUTTON LOGIC */
-let yesScale = 1;
-let busy = false;
-
-const noBtn = document.getElementById("no");
-const yesBtn = document.getElementById("yes");
-
-function moveNo() {
-    if (busy) return;
-    busy = true;
-
-    noBtn.classList.add("shake");
-
-    setTimeout(() => {
-        noBtn.classList.remove("shake");
-
-        const maxX = window.innerWidth - 160;
-        const maxY = window.innerHeight - 120;
-
-        noBtn.style.left = Math.random() * maxX + "px";
-        noBtn.style.top = Math.random() * maxY + "px";
-
-        yesScale += 0.12;
-        yesBtn.style.transform = `translateX(-120%) scale(${yesScale})`;
-
-        busy = false;
-    }, 250);
-}
-
-/* DEVICE DETECTION */
-if (window.matchMedia("(hover: hover)").matches) {
-    noBtn.addEventListener("mouseover", moveNo);
-} else {
-    noBtn.addEventListener("click", moveNo);
-}
-
-/* YES CLICK */
-yesBtn.addEventListener("click", () => {
-    document.getElementById("message").style.display = "block";
-
-    const iframe = document.getElementById("music");
-    iframe.contentWindow.postMessage(
-        '{"event":"command","func":"playVideo","args":""}',
-        "*"
-    );
-
-    for (let i = 0; i < 80; i++) {
-        const confetti = document.createElement("div");
-        confetti.className = "confetti";
-        confetti.style.left = Math.random() * 100 + "vw";
-        confetti.style.backgroundColor =
-            ["#ff5c8a", "#ffd6e5", "#ff85a2"][Math.floor(Math.random() * 3)];
-        confetti.style.animationDuration = (1 + Math.random()) + "s";
-        document.body.appendChild(confetti);
-
-        setTimeout(() => confetti.remove(), 2000);
-    }
-});
 </script>
 
 </body>
