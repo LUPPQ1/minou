@@ -120,14 +120,14 @@ button{
   border-radius:14px;
   border:none;
   cursor:pointer;
-  transition:left .45s ease, top .45s ease, transform .35s ease;
+  transition:opacity .6s ease, transform .4s ease;
 }
 #yes{
   background:linear-gradient(135deg,#ff5c8a,#ff85a2);
   color:white;
   left:50%;
   top:60%;
-  transform:translateX(-120%) scale(1);
+  transform:translateX(-120%);
 }
 #no{
   background:#3a3a4a;
@@ -135,12 +135,6 @@ button{
   left:50%;
   top:60%;
   transform:translateX(20%);
-}
-
-/* YES POP */
-#yes.pop{animation:yesPop .45s ease}
-@keyframes yesPop{
-  50%{transform:translateX(-120%) scale(1.25)}
 }
 
 /* MESSAGE */
@@ -154,7 +148,32 @@ button{
   padding:0 14px;
 }
 
-/* COUNTER BOX (GLOBAL FIXED) */
+/* ROMANTIC QUOTE */
+#quote{
+  position:absolute;
+  top:60%;
+  width:100%;
+  padding:0 22px;
+  font-size:22px;
+  line-height:1.4;
+  color:#ffd6e5;
+  opacity:0;
+  transform:translateY(12px);
+  transition:opacity 1.4s ease, transform 1.4s ease;
+  pointer-events:none;
+}
+#quote.show{
+  opacity:1;
+  transform:translateY(0);
+}
+@media(max-width:480px){
+  #quote{
+    font-size:18px;
+    top:56%;
+  }
+}
+
+/* COUNTER BOX */
 #counter-box{
   position:fixed;
   bottom:16px;
@@ -168,8 +187,6 @@ button{
   box-shadow:0 0 18px rgba(255,92,138,.45);
   z-index:999;
 }
-
-/* COUNTER TEXT */
 .count-title{
   font-size:13px;
   opacity:.75;
@@ -180,8 +197,6 @@ button{
   font-weight:600;
   letter-spacing:.5px;
 }
-
-/* MOBILE TUNE */
 @media(max-width:480px){
   .count-main{font-size:16px}
 }
@@ -214,18 +229,14 @@ button{
 <div id="overlay"><span>Tap to start ❤️</span></div>
 
 <div id="fade">
-  <span id="fr">Je t’aimerai toujours.</span>
+  <span id="fr">Je t’aime, toujours.</span>
   <span id="id">Aku akan selalu mencintaimu.</span>
 </div>
 
 <div class="container">
   <h1>Do you love me, Eleonore? 💕</h1>
 
-  <img
-    src="https://luppq1.github.io/minou/minou.PNG"
-    class="photo"
-    id="photo"
-  >
+  <img src="minou.PNG" class="photo" id="photo">
 
   <button id="yes">Yes</button>
   <button id="no">No</button>
@@ -236,6 +247,12 @@ button{
     <em>Je t’aime.</em><br>
     <strong>— Wahyu</strong>
   </div>
+
+  <div id="quote">
+    “Eleonore, loving you was never a choice.<br>
+    It was something my heart decided<br>
+    long before I understood it.” 💗
+  </div>
 </div>
 
 <div id="counter-box">
@@ -244,11 +261,9 @@ button{
 
 <div id="love-egg">I LOVE YOU MORE 💖</div>
 
-<iframe
-  id="music"
-  src="https://www.youtube.com/embed/kPhpHvnnn0Q?enablejsapi=1"
-  allow="autoplay">
-</iframe>
+<iframe id="music"
+src="https://www.youtube.com/embed/kPhpHvnnn0Q?enablejsapi=1"
+allow="autoplay"></iframe>
 
 <script>
 const overlay=document.getElementById("overlay");
@@ -256,6 +271,7 @@ const yes=document.getElementById("yes");
 const no=document.getElementById("no");
 const photo=document.getElementById("photo");
 const msg=document.getElementById("message");
+const quote=document.getElementById("quote");
 const fade=document.getElementById("fade");
 const fr=document.getElementById("fr");
 const id=document.getElementById("id");
@@ -263,8 +279,6 @@ const counter=document.getElementById("counter");
 const counterBox=document.getElementById("counter-box");
 const music=document.getElementById("music");
 const loveEgg=document.getElementById("love-egg");
-
-let yesScale=1, busy=false, loop;
 
 /* START */
 overlay.onclick=()=>{
@@ -274,28 +288,29 @@ overlay.onclick=()=>{
 };
 
 /* NO RUN */
-function moveNo(){
-  if(busy) return;
-  busy=true;
-  no.style.left=Math.random()*(innerWidth-140)+"px";
-  no.style.top=Math.random()*(innerHeight-140)+"px";
-  yesScale+=0.12;
-  yes.style.transform=`translateX(-120%) scale(${yesScale})`;
-  setTimeout(()=>busy=false,350);
-}
 no.addEventListener(
   matchMedia("(hover:hover)").matches?"mouseover":"click",
-  moveNo
+  ()=>{
+    no.style.left=Math.random()*(innerWidth-140)+"px";
+    no.style.top=Math.random()*(innerHeight-140)+"px";
+  }
 );
 
 /* YES */
 yes.onclick=()=>{
-  yes.classList.add("pop");
   photo.classList.add("active");
   msg.style.display="block";
   counterBox.style.display="block";
-  setTimeout(()=>yes.classList.remove("pop"),450);
-  setTimeout(startFade,5000);
+
+  /* HIDE BUTTONS */
+  yes.style.opacity="0";
+  no.style.opacity="0";
+  yes.style.pointerEvents="none";
+  no.style.pointerEvents="none";
+
+  /* SHOW QUOTE */
+  setTimeout(()=>quote.classList.add("show"),600);
+  setTimeout(startFade,6000);
 };
 
 /* FADE LOOP */
@@ -304,7 +319,7 @@ function startFade(){
   fr.classList.add("show");
   id.classList.remove("show");
 
-  loop=setInterval(()=>{
+  const loop=setInterval(()=>{
     fr.classList.toggle("show");
     id.classList.toggle("show");
   },3000);
@@ -351,4 +366,3 @@ setInterval(()=>{
 
 </body>
 </html>
-
