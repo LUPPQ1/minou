@@ -20,7 +20,7 @@ body {
     color: white;
 }
 
-/* OVERLAY */
+/* TAP OVERLAY */
 #overlay {
     position: fixed;
     inset: 0;
@@ -44,7 +44,7 @@ body {
     100% { opacity: .6; }
 }
 
-/* HEARTS */
+/* HEART BACKGROUND */
 .heart {
     position: absolute;
     top: -20px;
@@ -58,7 +58,7 @@ body {
     to { transform: translateY(110vh); }
 }
 
-/* LAYOUT */
+/* MAIN LAYOUT */
 .container {
     position: relative;
     width: 100%;
@@ -73,7 +73,7 @@ h1 {
     color: #ffd6e5;
 }
 
-/* PHOTO */
+/* PHOTO (SAFE FOR iOS) */
 .photo {
     width: 160px;
     height: 160px;
@@ -96,10 +96,7 @@ button {
     border: none;
     cursor: pointer;
     z-index: 5;
-    transition:
-        left 0.45s ease,
-        top 0.45s ease,
-        transform 0.35s ease;
+    transition: left .45s ease, top .45s ease, transform .35s ease;
 }
 
 #yes {
@@ -146,7 +143,10 @@ button {
 <div class="container">
     <h1>Do you love me, Eleonore? 💕</h1>
 
-    <img src="minou.png?v=5" alt="Wahyu & Eleonore" class="photo">
+    <!-- IMPORTANT: USE ORIGINAL FILE NAME -->
+    <img src="https://luppq1.github.io/minou/minou.PNG?v=1"
+         alt="Wahyu & Eleonore"
+         class="photo">
 
     <button id="yes">Yes</button>
     <button id="no">No</button>
@@ -174,16 +174,17 @@ const noBtn = document.getElementById("no");
 let yesScale = 1;
 let busy = false;
 
-/* START */
+/* START MUSIC */
 overlay.addEventListener("click", () => {
     overlay.style.display = "none";
+
     document.getElementById("music").contentWindow.postMessage(
         '{"event":"command","func":"playVideo","args":""}',
         "*"
     );
 });
 
-/* NO BUTTON MOVE */
+/* NO BUTTON RUN */
 function moveNo() {
     if (busy) return;
     busy = true;
@@ -205,14 +206,14 @@ yesBtn.addEventListener("click", () => {
     document.getElementById("message").style.display = "block";
 });
 
-/* DEVICE */
+/* DEVICE DETECTION */
 if (window.matchMedia("(hover: hover)").matches) {
     noBtn.addEventListener("mouseover", moveNo);
 } else {
     noBtn.addEventListener("click", moveNo);
 }
 
-/* HEART BACKGROUND */
+/* HEARTS */
 function createHeart() {
     const heart = document.createElement("div");
     heart.className = "heart";
@@ -221,6 +222,7 @@ function createHeart() {
     heart.style.animationDuration = (4 + Math.random() * 4) + "s";
     heart.style.fontSize = (14 + Math.random() * 14) + "px";
     document.body.appendChild(heart);
+
     setTimeout(() => heart.remove(), 8000);
 }
 setInterval(createHeart, 300);
