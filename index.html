@@ -6,7 +6,7 @@
 <title>Do You Love Me, Eleonore?</title>
 
 <style>
-:root {
+:root{
   --pink:#ff5c8a;
   --bg:#0f0f14;
 }
@@ -154,44 +154,36 @@ button{
   padding:0 14px;
 }
 
-/* COUNTER BOX (FIXED) */
+/* COUNTER BOX (GLOBAL FIXED) */
 #counter-box{
-  position: fixed;
-  bottom: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: auto;
-  display: none;
-  text-align: center;
-  background: rgba(15,15,20,0.85);
-  padding: 10px 16px;
-  border-radius: 16px;
-  box-shadow: 0 0 18px rgba(255,92,138,0.45);
-  z-index: 999;
+  position:fixed;
+  bottom:16px;
+  left:50%;
+  transform:translateX(-50%);
+  display:none;
+  text-align:center;
+  background:rgba(15,15,20,.85);
+  padding:10px 16px;
+  border-radius:16px;
+  box-shadow:0 0 18px rgba(255,92,138,.45);
+  z-index:999;
 }
 
-
-
-
-#counter{
-  font-size:clamp(14px,4vw,18px);
-  line-height:1.5;
-  color:#ffd6e5;
+/* COUNTER TEXT */
+.count-title{
+  font-size:13px;
+  opacity:.75;
+  margin-bottom:4px;
+}
+.count-main{
+  font-size:18px;
+  font-weight:600;
+  letter-spacing:.5px;
 }
 
-/* MOBILE FIX */
+/* MOBILE TUNE */
 @media(max-width:480px){
-  #counter-box{
-    position:fixed;
-    bottom:16px;
-    left:50%;
-    transform:translateX(-50%);
-    background:rgba(15,15,20,.85);
-    padding:10px 16px;
-    border-radius:16px;
-    box-shadow:0 0 18px rgba(255,92,138,.45);
-    z-index:60;
-  }
+  .count-main{font-size:16px}
 }
 
 /* EASTER EGG */
@@ -213,7 +205,6 @@ button{
   transform:translate(-50%,-50%) scale(1);
 }
 
-/* HIDE MUSIC */
 #music{display:none}
 </style>
 </head>
@@ -223,7 +214,7 @@ button{
 <div id="overlay"><span>Tap to start ❤️</span></div>
 
 <div id="fade">
-  <span id="fr">Je t’aimerai toujours.</span>
+  <span id="fr">Je t’aime, toujours.</span>
   <span id="id">Aku akan selalu mencintaimu.</span>
 </div>
 
@@ -231,7 +222,7 @@ button{
   <h1>Do you love me, Eleonore? 💕</h1>
 
   <img
-    src="https://luppq1.github.io/minou/minou.PNG?v=8"
+    src="https://luppq1.github.io/minou/minou.PNG"
     class="photo"
     id="photo"
   >
@@ -303,7 +294,6 @@ yes.onclick=()=>{
   photo.classList.add("active");
   msg.style.display="block";
   counterBox.style.display="block";
-
   setTimeout(()=>yes.classList.remove("pop"),450);
   setTimeout(startFade,5000);
 };
@@ -332,12 +322,13 @@ setInterval(()=>{
   const days=Math.floor(d/86400);d%=86400;
   const h=Math.floor(d/3600);d%=3600;
   const m=Math.floor(d/60);const s=d%60;
-  counter.innerHTML=
-    `We have been together for<br>
-     <strong>${days}</strong> days •
-     <strong>${h}</strong> hours •
-     <strong>${m}</strong> minutes •
-     <strong>${s}</strong> seconds ❤️`;
+
+  counter.innerHTML=`
+    <div class="count-title">Together for</div>
+    <div class="count-main">
+      ${days}d ${h}h ${m}m ${s}s ❤️
+    </div>
+  `;
 },1000);
 
 /* EASTER EGG */
@@ -360,6 +351,3 @@ setInterval(()=>{
 
 </body>
 </html>
-
-
-
