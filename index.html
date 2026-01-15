@@ -20,7 +20,7 @@ body {
     color: white;
 }
 
-/* OVERLAY */
+/* OVERLAY START */
 #overlay {
     position: fixed;
     inset: 0;
@@ -42,7 +42,46 @@ body {
     100% { opacity: .6; }
 }
 
-/* HEART BACKGROUND */
+/* FADE TO BLACK */
+#fade {
+    position: fixed;
+    inset: 0;
+    background: black;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 998;
+    transition: opacity 2.5s ease;
+}
+#fade.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+#fade span {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    text-align: center;
+    font-size: 32px;
+    color: #ffd6e5;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: opacity 2s ease 1.5s;
+}
+#fade.show span {
+    opacity: 1;
+}
+
+/* VOLUME */
+#volume {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    font-size: 22px;
+    cursor: pointer;
+    z-index: 20;
+}
+
+/* HEARTS */
 .heart {
     position: absolute;
     top: -20px;
@@ -64,7 +103,7 @@ body {
     z-index: 2;
 }
 h1 {
-    margin-top: 50px;
+    margin-top: 45px;
     font-size: 26px;
     color: #ffd6e5;
 }
@@ -78,27 +117,16 @@ h1 {
     border: 4px solid var(--pink);
     margin: 20px auto;
     display: block;
-    position: relative;
-    z-index: 5;
-
-    /* START BLACK & WHITE */
     filter: grayscale(100%);
-    box-shadow: 0 0 15px rgba(255,92,138,0.4);
-    transition: filter 1s ease, box-shadow .6s ease, transform .3s ease;
+    transition: filter 1s ease, transform .3s ease;
 }
-
-/* PHOTO COLOR + PULSE */
 .photo.active {
     filter: grayscale(0%);
-    box-shadow: 0 0 28px rgba(255,92,138,0.9);
     animation: beat 1.1s infinite;
 }
-
 @keyframes beat {
-    0%   { transform: scale(1); }
-    25%  { transform: scale(1.03); }
-    50%  { transform: scale(1.06); }
-    75%  { transform: scale(1.03); }
+    0% { transform: scale(1); }
+    50% { transform: scale(1.06); }
     100% { transform: scale(1); }
 }
 
@@ -110,67 +138,56 @@ button {
     border-radius: 14px;
     border: none;
     cursor: pointer;
-    z-index: 5;
-    transition: left .45s ease, top .45s ease, transform .35s ease;
+    transition: transform .35s ease, left .45s ease, top .45s ease;
 }
-
 #yes {
     background: linear-gradient(135deg, #ff5c8a, #ff85a2);
     color: white;
     left: 50%;
     top: 60%;
-    transform: translateX(-120%) scale(1);
+    transform: translateX(-120%);
 }
-
 #no {
-    background-color: #3a3a4a;
+    background: #3a3a4a;
     color: #ddd;
     left: 50%;
     top: 60%;
     transform: translateX(20%);
 }
 
-/* YES CLICK ANIMATION */
-#yes.pop {
-    animation: yesPop .5s ease;
-}
-@keyframes yesPop {
-    0% { transform: translateX(-120%) scale(1); }
-    50% { transform: translateX(-120%) scale(1.25); }
-    100% { transform: translateX(-120%) scale(1.1); }
-}
-
 /* MESSAGE */
 #message {
     position: absolute;
-    top: 75%;
+    top: 72%;
     width: 100%;
-    font-size: 22px;
+    font-size: 20px;
     color: #ff9bb8;
     display: none;
-    z-index: 5;
+}
+
+/* COUNTER */
+#counter {
+    margin-top: 12px;
+    font-size: 15px;
+    color: #ffd6e5;
 }
 
 /* HIDE YOUTUBE */
-#music {
-    display: none;
-}
+#music { display: none; }
 </style>
 </head>
 
 <body>
 
-<!-- TAP TO START -->
-<div id="overlay">
-    <span>Tap to start ❤️</span>
-</div>
+<div id="overlay"><span>Tap to start ❤️</span></div>
+<div id="fade"><span>Je t’aime, toujours.</span></div>
+<div id="volume">🔊</div>
 
 <div class="container">
     <h1>Do you love me, Eleonore? 💕</h1>
 
     <img
-      src="https://luppq1.github.io/minou/minou.PNG?v=2"
-      alt="Wahyu & Eleonore"
+      src="https://luppq1.github.io/minou/minou.PNG?v=4"
       class="photo"
       id="photo"
     >
@@ -179,14 +196,14 @@ button {
     <button id="no">No</button>
 
     <div id="message">
-        I knew it, Eleonore ❤️<br>
-        Love you always,<br>
-        <strong>Wahyu</strong><br>
-        <small>Since 27 April 2025</small>
+        Eleonore, even when we are far apart,<br>
+        my heart always finds you.<br><br>
+        <em>Je t’aime.</em><br>
+        <strong>— Wahyu</strong>
+        <div id="counter"></div>
     </div>
 </div>
 
-<!-- YOUTUBE MUSIC -->
 <iframe
     id="music"
     src="https://www.youtube.com/embed/kPhpHvnnn0Q?enablejsapi=1"
@@ -195,68 +212,83 @@ button {
 
 <script>
 const overlay = document.getElementById("overlay");
+const fade = document.getElementById("fade");
 const yesBtn = document.getElementById("yes");
 const noBtn = document.getElementById("no");
 const photo = document.getElementById("photo");
 const music = document.getElementById("music");
+const volume = document.getElementById("volume");
+const counter = document.getElementById("counter");
 
-let yesScale = 1;
-let busy = false;
+let muted = false;
 
-/* START MUSIC */
-overlay.addEventListener("click", () => {
+/* START */
+overlay.onclick = () => {
     overlay.style.display = "none";
     music.contentWindow.postMessage(
         '{"event":"command","func":"playVideo","args":""}',
         "*"
     );
-});
+};
 
-/* NO BUTTON RUN */
-function moveNo() {
-    if (busy) return;
-    busy = true;
+/* VOLUME */
+volume.onclick = () => {
+    muted = !muted;
+    volume.textContent = muted ? "🔇" : "🔊";
+    music.contentWindow.postMessage(
+        `{"event":"command","func":"${muted ? "mute" : "unMute"}","args":""}`,
+        "*"
+    );
+};
 
-    const maxX = window.innerWidth - 140;
-    const maxY = window.innerHeight - 140;
-
-    noBtn.style.left = Math.random() * maxX + "px";
-    noBtn.style.top = Math.random() * maxY + "px";
-
-    yesScale += 0.12;
-    yesBtn.style.transform = `translateX(-120%) scale(${yesScale})`;
-
-    setTimeout(() => busy = false, 350);
-}
+/* NO BUTTON */
+noBtn.onmouseover = () => {
+    noBtn.style.left = Math.random() * (innerWidth - 140) + "px";
+    noBtn.style.top = Math.random() * (innerHeight - 140) + "px";
+};
 
 /* YES BUTTON */
-yesBtn.addEventListener("click", () => {
-    yesBtn.classList.add("pop");
+yesBtn.onclick = () => {
     photo.classList.add("active");
     document.getElementById("message").style.display = "block";
 
-    setTimeout(() => yesBtn.classList.remove("pop"), 500);
-});
+    setTimeout(() => fade.classList.add("show"), 5000);
+};
 
-/* DEVICE DETECTION */
-if (window.matchMedia("(hover: hover)").matches) {
-    noBtn.addEventListener("mouseover", moveNo);
-} else {
-    noBtn.addEventListener("click", moveNo);
-}
+/* COUNTER LIVE */
+const startDate = new Date("2025-04-27T00:00:00");
+function updateCounter() {
+    const now = new Date();
+    let diff = Math.floor((now - startDate) / 1000);
 
-/* HEART BACKGROUND */
-function createHeart() {
-    const heart = document.createElement("div");
-    heart.className = "heart";
-    heart.innerText = "💖";
-    heart.style.left = Math.random() * 100 + "vw";
-    heart.style.animationDuration = (4 + Math.random() * 4) + "s";
-    heart.style.fontSize = (14 + Math.random() * 14) + "px";
-    document.body.appendChild(heart);
-    setTimeout(() => heart.remove(), 8000);
+    const days = Math.floor(diff / 86400);
+    diff %= 86400;
+    const hours = Math.floor(diff / 3600);
+    diff %= 3600;
+    const minutes = Math.floor(diff / 60);
+    const seconds = diff % 60;
+
+    counter.innerHTML = `
+        <br>We have been together for<br>
+        <strong>${days}</strong> days •
+        <strong>${hours}</strong> hours •
+        <strong>${minutes}</strong> minutes •
+        <strong>${seconds}</strong> seconds ❤️
+    `;
 }
-setInterval(createHeart, 300);
+setInterval(updateCounter, 1000);
+updateCounter();
+
+/* HEARTS */
+setInterval(() => {
+    const h = document.createElement("div");
+    h.className = "heart";
+    h.innerText = "💖";
+    h.style.left = Math.random() * 100 + "vw";
+    h.style.animationDuration = (4 + Math.random() * 4) + "s";
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 8000);
+}, 300);
 </script>
 
 </body>
