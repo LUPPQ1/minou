@@ -156,15 +156,20 @@ button{
 
 /* COUNTER BOX (FIXED) */
 #counter-box{
-  position: absolute;
-  top: 78%;
+  position: fixed;
+  bottom: 16px;
   left: 50%;
-  transform: translate(-50%, 0);
-  width: 100%;
+  transform: translateX(-50%);
+  width: auto;
   display: none;
   text-align: center;
-  z-index: 20;
+  background: rgba(15,15,20,0.85);
+  padding: 10px 16px;
+  border-radius: 16px;
+  box-shadow: 0 0 18px rgba(255,92,138,0.45);
+  z-index: 999;
 }
+
 
 
 
@@ -355,5 +360,6 @@ setInterval(()=>{
 
 </body>
 </html>
+
 
 
