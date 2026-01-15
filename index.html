@@ -6,6 +6,17 @@
 <title>Do You Love Me?</title>
 
 <style>
+    .photo {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #ff5c8a;
+    box-shadow: 0 0 20px rgba(255,92,138,0.6);
+    margin: 20px auto;
+    display: block;
+}
+
 :root {
     --pink: #ff5c8a;
     --bg-dark: #0f0f14;
@@ -127,6 +138,8 @@ button {
 
 <div class="container">
     <h1>Do you love me? 💕</h1>
+    
+<img src="minou.png" alt="Wahyu & Eleonore" class="photo">
 
     <button id="yes">Yes</button>
     <button id="no">No</button>
@@ -210,3 +223,4 @@ yesBtn.addEventListener("click", () => {
 
 </body>
 </html>
+
