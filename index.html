@@ -44,7 +44,7 @@ body {
     100% { opacity: .6; }
 }
 
-/* FLOATING HEARTS */
+/* HEARTS */
 .heart {
     position: absolute;
     top: -20px;
@@ -96,6 +96,10 @@ button {
     border: none;
     cursor: pointer;
     z-index: 5;
+    transition:
+        left 0.45s ease,
+        top 0.45s ease,
+        transform 0.35s ease;
 }
 
 #yes {
@@ -103,7 +107,7 @@ button {
     color: white;
     left: 50%;
     top: 60%;
-    transform: translateX(-120%);
+    transform: translateX(-120%) scale(1);
 }
 
 #no {
@@ -142,7 +146,7 @@ button {
 <div class="container">
     <h1>Do you love me, Eleonore? 💕</h1>
 
-    <img src="minou.png?v=4" alt="Wahyu & Eleonore" class="photo">
+    <img src="minou.png?v=5" alt="Wahyu & Eleonore" class="photo">
 
     <button id="yes">Yes</button>
     <button id="no">No</button>
@@ -155,7 +159,7 @@ button {
     </div>
 </div>
 
-<!-- YOUTUBE MUSIC (CUSTOM) -->
+<!-- YOUTUBE MUSIC -->
 <iframe
     id="music"
     src="https://www.youtube.com/embed/kPhpHvnnn0Q?enablejsapi=1"
@@ -167,23 +171,33 @@ const overlay = document.getElementById("overlay");
 const yesBtn = document.getElementById("yes");
 const noBtn = document.getElementById("no");
 
-/* START MUSIC */
+let yesScale = 1;
+let busy = false;
+
+/* START */
 overlay.addEventListener("click", () => {
     overlay.style.display = "none";
-
     document.getElementById("music").contentWindow.postMessage(
         '{"event":"command","func":"playVideo","args":""}',
         "*"
     );
 });
 
-/* NO BUTTON RUN */
+/* NO BUTTON MOVE */
 function moveNo() {
-    const maxX = window.innerWidth - 120;
-    const maxY = window.innerHeight - 120;
+    if (busy) return;
+    busy = true;
+
+    const maxX = window.innerWidth - 140;
+    const maxY = window.innerHeight - 140;
 
     noBtn.style.left = Math.random() * maxX + "px";
     noBtn.style.top = Math.random() * maxY + "px";
+
+    yesScale += 0.12;
+    yesBtn.style.transform = `translateX(-120%) scale(${yesScale})`;
+
+    setTimeout(() => busy = false, 350);
 }
 
 /* YES BUTTON */
@@ -191,7 +205,7 @@ yesBtn.addEventListener("click", () => {
     document.getElementById("message").style.display = "block";
 });
 
-/* DEVICE DETECTION */
+/* DEVICE */
 if (window.matchMedia("(hover: hover)").matches) {
     noBtn.addEventListener("mouseover", moveNo);
 } else {
@@ -207,7 +221,6 @@ function createHeart() {
     heart.style.animationDuration = (4 + Math.random() * 4) + "s";
     heart.style.fontSize = (14 + Math.random() * 14) + "px";
     document.body.appendChild(heart);
-
     setTimeout(() => heart.remove(), 8000);
 }
 setInterval(createHeart, 300);
